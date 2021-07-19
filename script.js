@@ -5,8 +5,13 @@ const questionElement = document.getElementById('question')
 const answerButtonsElement = document.getElementById('answer-buttons')
 const text = document.getElementById('text')
 
+const axios = require('axios').default;
+const url = 'localhost:8080';
+
 let shuffledQuestions, currentQuestionIndex
-let scoring = 0
+//let scoring = 0
+
+
 
 startButton.addEventListener('click', startGame)
 nextButton.addEventListener('click', () =>{
@@ -17,7 +22,7 @@ nextButton.addEventListener('click', () =>{
 function startGame(){
     console.log('Started')
     startButton.classList.add('hide')
-    shuffledQuestions = questions.sort(() => Math.random() - 0.5)
+    shuffledQuestions = questions
     currentQuestionIndex = 0
     questionContainerElement.classList.remove('hide')
     setNextQuestion()
@@ -31,6 +36,33 @@ function setNextQuestion(){
 function showQuestion(question) {
     questionElement.innerText = question.question
     question.answers.forEach(answer => {
+
+        switch (question){
+            case 0:
+                console.log("nice")
+                if(answer.correct){
+                    axios.get(url + '/api/nice')
+                }else{
+                    axios.get(url + '/api/notNice')
+                }
+                break;
+            case 1:
+                console.log("crypto")
+                if(answer.correct){
+                    axios.get(url + '/api/crypto')
+                }else{
+                    axios.get(url + '/api/notCrypto')
+                }
+                break;
+            case 2:
+                console.log("donate")
+                if(answer.correct){
+                    axios.get(url + '/api/donate')
+                }else{
+                    axios.get(url + '/api/notDonate')
+                }
+        }
+
         const button = document.createElement('button')
         button.innerText = answer.text
         button.classList.add('btn')
@@ -40,6 +72,8 @@ function showQuestion(question) {
         button.addEventListener('click', selectAnswer)
         answerButtonsElement.appendChild(button)
     })
+
+
 }
 
 function resetState() {
@@ -53,13 +87,6 @@ function resetState() {
 function selectAnswer(e){
     const selectedButton = e.target
     const correct = selectedButton.dataset.correct
-    
-    if(correct){
-        scoring++
-        if(scoring > questions.length){
-            scoring = questions.length
-        }
-    }
 
     setStatusClass(document.body, correct)
     Array.from(answerButtonsElement.children).forEach(button => {
@@ -89,27 +116,6 @@ function clearStatusClass(element){
     element.classList.remove('wrong')
 }
 
-let nice = 0;
-let notNice = 0;
-
-let crypto = 0;
-let notCrypto = 0;
-
-let donate = 0;
-let NotDonate = 0;
-
-let run = 0;
-let notRun = 0;
-
-let goodies = 0;
-let notGoodies = 0;
-
-let use = 0;
-let notUse = 0;
-
-let invest = 0;
-let notInvest = 0;
-
 const questions = [
     {
         question: 'How did you find this presentation?',
@@ -119,7 +125,7 @@ const questions = [
         ]
     },
     {
-        question: 'Do you think the fact that Donate A Cry is based on a blockchain and uses cryptocurrency is a plus ?',
+        question: 'Do you think the fact that Donate A Run is based on a blockchain and uses cryptocurrency is a plus ?',
         answers: [
             { text: 'Yes', correct: true},
             { text: 'No', correct: false}
